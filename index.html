@@ -98,7 +98,14 @@
     if (!text.trim()) return; // لمنع إرسال رسائل فارغة
 
     // جلب التاريخ والوقت
-    const date = new Date().toLocaleString('ar-EG');
+    const date = new Date().toLocaleString('en-EG', { 
+  year: 'numeric', 
+  month: 'numeric', 
+  day: 'numeric', 
+  hour: '2-digit', 
+  minute: '2-digit', 
+  hour12: true 
+});
 
     // إرسال البيانات إلى قاعدة البيانات
     db.ref("messages").push({
