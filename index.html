@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>رسائل القلب</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: url('https://www.pricechopper.com/wp-content/uploads/2023/08/Sunflowers-scaled.jpg') no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.9);
+      padding: 20px;
+      border-radius: 20px;
+      text-align: center;
+      width: 320px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    textarea {
+      width: 90%;
+      height: 80px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #ffb6c1;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .messages {
+      display: none;
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      text-align: right;
+    }
+
+    .msg {
+      background: #fff;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <textarea id="message" placeholder="احكيلي، اكتبيلي، انا بشوف وبسمعك"></textarea>
+  <button onclick="sendMessage()">إرسال</button>
+
+  <p>لن اتوقف عن حبك يا قمري</p>
+
+  <button onclick="toggleMessages()">كتابات قلبي وقلبك</button>
+
+  <div class="messages" id="messages"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+<script>
+  // بيانات مشروعك المدمجة
+  const firebaseConfig = {
+    apiKey: "AIzaSyBx-yysQwsqbizfdTcVnoXZQQMmVppaKDE",
+    authDomain: "suraibrahem2026.firebaseapp.com",
+    databaseURL: "https://suraibrahem2026-default-rtdb.europe-west1.firebasedatabase.app", // تم إضافة الرابط هنا
+    projectId: "suraibrahem2026",
+    storageBucket: "suraibrahem2026.firebasestorage.app",
+    messagingSenderId: "7741271745",
+    appId: "1:7741271745:web:d0e45fd7420e9dfd78ee40",
+    measurementId: "G-TW9VLG3LE8"
+  };
+
+  // تشغيل Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  function sendMessage() {
+    const text = document.getElementById("message").value;
+    if (!text.trim()) return; // لمنع إرسال رسائل فارغة
+
+    // جلب التاريخ والوقت
+    const date = new Date().toLocaleString('ar-EG');
+
+    // إرسال البيانات إلى قاعدة البيانات
+    db.ref("messages").push({
+      text: text,
+      date: date
+    });
+
+    document.getElementById("message").value = ""; // تفريغ المربع بعد الإرسال
+  }
+
+  function toggleMessages() {
+    const box = document.getElementById("messages");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  }
+
+  // قراءة الرسائل فوراً عند إضافتها
+  db.ref("messages").on("value", snapshot => {
+    const data = snapshot.val();
+    const box = document.getElementById("messages");
+    box.innerHTML = "";
+
+    if (data) {
+      for (let id in data) {
+        const msg = data[id];
+        box.innerHTML += `<div class="msg">${msg.text}<br><small style="color: gray;">${msg.date}</small></div>`;
+      }
+      // النزول لآخر رسالة تلقائياً
+      box.scrollTop = box.scrollHeight;
+    }
+  });
+</script>
+
+</body>
+</html>
